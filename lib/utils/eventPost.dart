@@ -16,7 +16,12 @@ class EventPost {
 
   EventPost(this.name, this.date, this.time, this.venue, this.detail);
 
+  dynamic currentEventID() {
+    return this._id.key;
+  }
+
   void attendEvent(User user) {
+    //print('${this._id.key}' + " <------ " + '${this.userRegistered}');
     if (this.userRegistered.contains(user.uid)) {
       //this.userRegistered.remove(user.uid);
       Fluttertoast.showToast(

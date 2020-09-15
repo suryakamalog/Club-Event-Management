@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -47,22 +48,26 @@ class _SignUpState extends State<SignUp> {
   String _mobile;
   String _email;
   String _password;
+  String _confirmPassword;
 
   bool validateName = false;
   bool validateMobile = false;
   bool validateEmail = false;
   bool validatePassword = false;
+  bool validateConfirmPassword = false;
 
   TextEditingController nameController = TextEditingController();
   TextEditingController mobileController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
 
   Future<void> click() async {
     _name = "${nameController.text}";
     _mobile = "${mobileController.text}";
     _email = "${emailController.text}";
     _password = "${passwordController.text}";
+    _confirmPassword = "${confirmPasswordController}";
     // print(_email);
     // print(_password);
     print("clicked");
@@ -70,7 +75,7 @@ class _SignUpState extends State<SignUp> {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: _email, password: _password);
       User user = result.user;
-      print(result);
+
       FirebaseFirestore.instance
           .collection("users")
           .doc((emailController.text))
@@ -79,10 +84,11 @@ class _SignUpState extends State<SignUp> {
         "mobile": "${mobileController.text}",
         "email": "${emailController.text}",
         "year": '${_year}',
+        "branch": '${_branch}',
         "role": "student"
       });
       print("registered the user");
-      print(user);
+      print(user.uid);
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => LoginPage()));
     } catch (e) {
@@ -231,6 +237,35 @@ class _SignUpState extends State<SignUp> {
                                     ? "Password can\'t be empty"
                                     : null,
                                 hintText: "Password",
+                                hintStyle: TextStyle(
+                                    color: Colors.grey, fontSize: 12.0)),
+                          ),
+                        ),
+                        SizedBox(
+                          height: ScreenUtil().setHeight(40),
+                        ),
+                        Text("Confirm Password",
+                            style: TextStyle(
+                                fontFamily: "Poppins-Medium",
+                                fontSize: ScreenUtil().setSp(38))),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 20.0),
+                          child: TextField(
+                            onChanged: (value) {
+                              setState(() {
+                                value.isEmpty
+                                    ? validateConfirmPassword = true
+                                    : validateConfirmPassword = false;
+                              });
+                            },
+                            controller: confirmPasswordController,
+                            obscureText: true,
+                            decoration: InputDecoration(
+                                errorText: passwordController.text !=
+                                        confirmPasswordController.text
+                                    ? "Password does not match"
+                                    : null,
+                                hintText: "Confirm Password",
                                 hintStyle: TextStyle(
                                     color: Colors.grey, fontSize: 12.0)),
                           ),

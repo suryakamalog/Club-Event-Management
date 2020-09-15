@@ -1,5 +1,6 @@
 import 'package:event/ui/userDashboard.dart';
 import 'package:event/ui/adminDashboard.dart';
+import 'package:event/ui/userProfilePage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'signUp.dart';
 import 'utils/Constants.dart';
 import 'dart:io';
+import 'ui/userQR.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -23,10 +25,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  String name;
-  String email;
-  String role;
-  String mobile;
+  String _name;
+  String _role;
+  String _mobile;
   String _email;
   String _password;
   String _year;
@@ -41,44 +42,42 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> click() async {
     _email = "${emailController.text}";
     _password = "${passwordController.text}";
-    // print(_email);
-    // print(_password);
-    print("clicked");
+
     try {
       UserCredential user = await _auth.signInWithEmailAndPassword(
           email: _email, password: _password);
-      print(user);
 
       var d = await FirebaseFirestore.instance
           .collection('users')
-          .doc(emailController.text)
+          .doc(_email)
           .get()
           .then((DocumentSnapshot) async {
-        name = DocumentSnapshot.data()['name'];
-        mobile = DocumentSnapshot.data()['mobile'];
-        email = DocumentSnapshot.data()['email'];
-        role = DocumentSnapshot.data()['role'];
+        _name = DocumentSnapshot.data()['name'];
+        _mobile = DocumentSnapshot.data()['mobile'];
+        _email = DocumentSnapshot.data()['email'];
+        _role = DocumentSnapshot.data()['role'];
+        _year = DocumentSnapshot.data()['year'];
+        _branch = DocumentSnapshot.data()['branch'];
 
-        print("name : $name");
-
-        final prefs = await SharedPreferences.getInstance();
-
-        prefs.setString(Constants.loggedInUserRole, role);
-        prefs.setString(Constants.loggedInUserMobile, mobile);
-        prefs.setString(Constants.loggedInUserName, name);
-        prefs.setString(Constants.isLoggedIn, 'true');
-        //  print("Constants name : ${Constants.loggedInUserMobile}");
-        print(DocumentSnapshot.data.toString());
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString(Constants.loggedInUserRole, _role);
+        print(Constants.loggedInUserRole);
+        //print(_role);
       });
-      print(role);
+      print(Constants.loggedInUserRole);
       var curUser = _auth.currentUser;
-      if (role == "student")
-        Navigator.pushReplacement(context,
+      if (_role == "student")
+        // Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (context) =>
+        //             ProfilePage(_name, _mobile, _email, _year, _branch)));
+        Navigator.push(context,
             MaterialPageRoute(builder: (context) => UserDashboard(curUser)));
-      else if (role == "admin")
-        Navigator.pushReplacement(context,
+      else if (_role == "admin")
+        Navigator.push(context,
             MaterialPageRoute(builder: (context) => AdminDashboard(curUser)));
-      print("found the user");
+      //print(prefs.getString('loggedInUserRole'));
     } catch (e) {
       print(e.message);
     }

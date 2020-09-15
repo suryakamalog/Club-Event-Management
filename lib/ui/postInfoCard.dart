@@ -1,9 +1,9 @@
-import 'package:event/ui/attendForm.dart';
+import 'package:event/ui/regUserList.dart';
+import 'package:event/utils/Constants.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/eventPost.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../utils/CommonData.dart';
-import '../utils/userData.dart';
 
 const textStyle = TextStyle(
   fontSize: 16,
@@ -20,18 +20,25 @@ class PostInfo extends StatefulWidget {
 }
 
 class _PostInfoState extends State<PostInfo> {
-  bool _isButtonDisabled;
+  // var post;
   void attend(Function callBack) {
     this.setState(() {
       callBack();
     });
   }
 
-  void click() {
-    print("button clicked");
-    //EventPost.attendEvent(widget.user);
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => AttendForm()));
+  String _role;
+  shared() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _role = prefs.getString(Constants.loggedInUserRole);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    shared();
   }
 
   @override
@@ -42,6 +49,7 @@ class _PostInfoState extends State<PostInfo> {
         itemCount: this.widget.listItems.length,
         itemBuilder: (context, index) {
           var post = this.widget.listItems[index];
+
           return Card(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
@@ -84,16 +92,29 @@ class _PostInfoState extends State<PostInfo> {
                       ),
                       Center(
                           child: FlatButton(
-                        color: post.userRegistered.contains(widget.user.uid)
-                            ? Colors.grey
-                            : Colors.blue,
+                        color: _role == "admin"
+                            ? Colors.blue
+                            : (post.userRegistered.contains(widget.user.uid)
+                                ? Colors.grey
+                                : Colors.blue),
                         textColor: Colors.white,
                         padding: EdgeInsets.all(8.0),
                         splashColor: Colors.grey,
-                        onPressed: () =>
-                            this.attend(() => post.attendEvent(widget.user)),
+                        onPressed: () {
+                          if (_role == 'admin') {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => RegUserList(
+                                        post.currentEventID(),
+                                        post.userRegistered.toList())));
+                          } else {
+                            print("in this");
+                            this.attend(() => post.attendEvent(widget.user));
+                          }
+                        },
                         child: Text(
-                          "Attend",
+                          _role == "admin" ? "See attendees" : "Register",
                           style: TextStyle(fontSize: 20.0),
                         ),
                       ))
