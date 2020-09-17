@@ -73,8 +73,8 @@ class _AdminPostPageState extends State<AdminPostPage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xff028090),
-        title: Text('Fill Workshop details'),
+        backgroundColor: Color(0xFFFF4747),
+        title: Text('Add Event'),
       ),
       body: Padding(
           padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
@@ -94,7 +94,7 @@ class _AdminPostPageState extends State<AdminPostPage> {
                         Text("Workshop name",
                             style: TextStyle(
                                 fontFamily: "Poppins-Medium",
-                                fontSize: ScreenUtil().setSp(38))),
+                                fontSize: ScreenUtil().setSp(45))),
                         TextField(
                           onChanged: (value) {
                             setState(() {
@@ -106,7 +106,7 @@ class _AdminPostPageState extends State<AdminPostPage> {
                           controller: workshopNameController,
                           decoration: InputDecoration(
                               errorText: validateWorkshopName
-                                  ? "Year can\'t be empty"
+                                  ? "Workshop Name can\'t be empty"
                                   : null,
                               hintText: "Workshop Name",
                               hintStyle: TextStyle(
@@ -119,8 +119,13 @@ class _AdminPostPageState extends State<AdminPostPage> {
                               Text("Date: $_date",
                                   style: TextStyle(
                                       fontFamily: "Poppins-Medium",
-                                      fontSize: ScreenUtil().setSp(38))),
+                                      fontSize: ScreenUtil().setSp(45))),
                               RaisedButton(
+                                  splashColor: Colors.white10,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18.0),
+                                      side: BorderSide(color: Colors.red)),
+                                  color: Color(0xFFFF4747),
                                   onPressed: () {
                                     DatePicker.showDatePicker(context,
                                         showTitleActions: true,
@@ -150,7 +155,7 @@ class _AdminPostPageState extends State<AdminPostPage> {
                                   },
                                   child: Text(
                                     'Select Date',
-                                    style: TextStyle(color: Colors.blue),
+                                    style: TextStyle(color: Colors.white),
                                   )),
                             ]),
                         Row(
@@ -159,8 +164,13 @@ class _AdminPostPageState extends State<AdminPostPage> {
                             Text("Time: $_time",
                                 style: TextStyle(
                                     fontFamily: "Poppins-Medium",
-                                    fontSize: ScreenUtil().setSp(38))),
+                                    fontSize: ScreenUtil().setSp(45))),
                             RaisedButton(
+                                splashColor: Colors.white10,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18.0),
+                                    side: BorderSide(color: Colors.red)),
+                                color: Color(0xFFFF4747),
                                 onPressed: () {
                                   DatePicker.showTime12hPicker(context,
                                       showTitleActions: true,
@@ -178,7 +188,7 @@ class _AdminPostPageState extends State<AdminPostPage> {
                                 },
                                 child: Text(
                                   'Select Time',
-                                  style: TextStyle(color: Colors.blue),
+                                  style: TextStyle(color: Colors.white),
                                 )),
                           ],
                         ),
@@ -186,7 +196,7 @@ class _AdminPostPageState extends State<AdminPostPage> {
                         Text("Venue",
                             style: TextStyle(
                                 fontFamily: "Poppins-Medium",
-                                fontSize: ScreenUtil().setSp(38))),
+                                fontSize: ScreenUtil().setSp(45))),
                         TextField(
                           onChanged: (value) {
                             setState(() {
@@ -207,7 +217,7 @@ class _AdminPostPageState extends State<AdminPostPage> {
                         Text("Other Details",
                             style: TextStyle(
                                 fontFamily: "Poppins-Medium",
-                                fontSize: ScreenUtil().setSp(38))),
+                                fontSize: ScreenUtil().setSp(45))),
                         TextField(
                           maxLines: 3,
                           onChanged: (value) {
@@ -228,11 +238,14 @@ class _AdminPostPageState extends State<AdminPostPage> {
                         ),
                         SizedBox(height: ScreenUtil().setHeight(30)),
                         Center(
-                            child: FlatButton(
-                          color: Colors.blue,
+                            child: RaisedButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18.0),
+                              side: BorderSide(color: Colors.red)),
+                          color: Color(0xFFFF4747),
                           textColor: Colors.white,
                           padding: EdgeInsets.all(8.0),
-                          splashColor: Colors.blueAccent,
+                          splashColor: Colors.white10,
                           onPressed: this.click,
                           child: Text(
                             "Submit",

@@ -22,7 +22,6 @@ class _MyAppState extends State<MyApp> {
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: LoginPage() //Dashboard() //LoginPage(),
-        );
+        home: LoginPage());
   }
 }

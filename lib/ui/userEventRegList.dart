@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event/ui/userEventRegCard.dart';
-import 'package:event/utils/eventDatabase.dart';
 import 'package:flutter/material.dart';
 
 class UserEventRegList extends StatefulWidget {
@@ -34,7 +33,7 @@ class _UserEventRegListState extends State<UserEventRegList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xff028090),
+        backgroundColor: Color(0xFFFF4747),
         title: Text('Registered Events'),
       ),
       body: ListView.builder(

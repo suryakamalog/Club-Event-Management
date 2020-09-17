@@ -1,10 +1,9 @@
-import 'package:event/ui/regUserList.dart';
-import 'package:event/utils/Constants.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../utils/eventPost.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../ui/regUserList.dart';
+import '../utils/eventPost.dart';
 
 const textStyle = TextStyle(
   fontSize: 16,
@@ -119,15 +118,18 @@ class _PostInfoState extends State<PostInfo> {
                         height: 10,
                       ),
                       Center(
-                          child: FlatButton(
+                          child: RaisedButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18.0),
+                            side: BorderSide(color: Colors.white)),
                         color: _role == "admin"
-                            ? Colors.blue
+                            ? Colors.white
                             : (post.userRegistered.contains(widget.user.uid)
                                 ? Colors.grey
-                                : Colors.blue),
-                        textColor: Colors.white,
+                                : Color(0xFFFF4747)),
+                        textColor: _role == "admin" ? Colors.red : Colors.white,
                         padding: EdgeInsets.all(8.0),
-                        splashColor: Colors.grey,
+                        splashColor: Colors.white10,
                         onPressed: () {
                           if (_role == 'admin') {
                             print("Inside postinfocard-----admin");
@@ -146,7 +148,7 @@ class _PostInfoState extends State<PostInfo> {
                         },
                         child: Text(
                           _role == "admin" ? "See attendees" : "Register",
-                          style: TextStyle(fontSize: 20.0),
+                          style: TextStyle(fontSize: 17.0),
                         ),
                       ))
                     ]),

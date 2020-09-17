@@ -1,15 +1,12 @@
 import 'package:event/ui/userDashboard.dart';
 import 'package:event/ui/adminDashboard.dart';
-import 'package:event/ui/userProfilePage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'signUp.dart';
-import 'utils/Constants.dart';
 import 'dart:io';
-import 'ui/userQR.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -105,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
         onWillPop: _onWillPop,
         child: Scaffold(
           appBar: AppBar(
-            backgroundColor: Color(0xff028090),
+            backgroundColor: Color(0xFFFF4747),
             title: Text('Welcome'),
           ),
           body: Padding(
@@ -124,10 +121,10 @@ class _LoginPageState extends State<LoginPage> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text("Email",
-                                style: TextStyle(
-                                    fontFamily: "Poppins-Medium",
-                                    fontSize: ScreenUtil().setSp(38))),
+                            // Text("Email",
+                            //     style: TextStyle(
+                            //         fontFamily: "Poppins-Medium",
+                            //         fontSize: ScreenUtil().setSp(45))),
                             TextField(
                               keyboardType: TextInputType.emailAddress,
                               controller: emailController,
@@ -139,20 +136,39 @@ class _LoginPageState extends State<LoginPage> {
                                 });
                               },
                               decoration: InputDecoration(
-                                  errorText: validateEmail
-                                      ? "Email can\'t be empty"
-                                      : null,
+                                  prefixIcon: Icon(
+                                    Icons.mail_outline,
+                                    color: Colors.grey,
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.white70,
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20.0)),
+                                    borderSide: BorderSide(
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20.0)),
+                                    borderSide:
+                                        BorderSide(color: Colors.red, width: 2),
+                                  ),
+                                  // errorText: validateEmail
+                                  //     ? "Email can\'t be empty"
+                                  //     : null,
                                   hintText: "Email",
                                   hintStyle: TextStyle(
-                                      color: Colors.grey, fontSize: 12.0)),
+                                      color: Colors.grey, fontSize: 15.0)),
                             ),
                             SizedBox(
                               height: ScreenUtil().setHeight(35),
                             ),
-                            Text("Password",
-                                style: TextStyle(
-                                    fontFamily: "Poppins-Medium",
-                                    fontSize: ScreenUtil().setSp(38))),
+                            // Text("Password",
+                            //     style: TextStyle(
+                            //         fontFamily: "Poppins-Medium",
+                            //         fontSize: ScreenUtil().setSp(45))),
                             Padding(
                               padding: const EdgeInsets.only(bottom: 20.0),
                               child: TextField(
@@ -166,26 +182,46 @@ class _LoginPageState extends State<LoginPage> {
                                 controller: passwordController,
                                 obscureText: true,
                                 decoration: InputDecoration(
-                                    errorText: validatePassword
-                                        ? "Password can\'t be empty"
-                                        : null,
+                                    prefixIcon: Icon(
+                                      Icons.lock,
+                                      color: Colors.grey,
+                                    ),
+                                    filled: true,
+                                    fillColor: Colors.white70,
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(20.0)),
+                                      borderSide: BorderSide(color: Colors.red),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(20.0)),
+                                      borderSide: BorderSide(
+                                          color: Colors.red, width: 2),
+                                    ),
+                                    // errorText: validatePassword
+                                    //     ? "Password can\'t be empty"
+                                    //     : null,
                                     hintText: "Password",
                                     hintStyle: TextStyle(
-                                        color: Colors.grey, fontSize: 12.0)),
+                                        color: Colors.grey, fontSize: 15.0)),
                               ),
                             ),
                             SizedBox(
                               height: ScreenUtil().setHeight(40),
                             ),
                             Center(
-                                child: FlatButton(
-                              color: Colors.blue,
+                                child: RaisedButton(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18.0),
+                                  side: BorderSide(color: Colors.red)),
+                              color: Colors.red,
                               textColor: Colors.white,
                               padding: EdgeInsets.all(8.0),
-                              splashColor: Colors.blueAccent,
+                              splashColor: Colors.white,
                               onPressed: this.click,
                               child: Text(
-                                "Submit",
+                                "Login",
                                 style: TextStyle(fontSize: 20.0),
                               ),
                             ))
@@ -204,7 +240,7 @@ class _LoginPageState extends State<LoginPage> {
                                   "New User? ",
                                   style: TextStyle(
                                     fontFamily: "Poppins-Medium",
-                                    fontSize: 15.0,
+                                    fontSize: 18.0,
                                   ),
                                 ),
                                 InkWell(
@@ -217,9 +253,9 @@ class _LoginPageState extends State<LoginPage> {
                                   },
                                   child: Text("SignUp",
                                       style: TextStyle(
-                                          color: Color(0xFF5d74e3),
+                                          color: Colors.red,
                                           fontFamily: "Poppins-Bold",
-                                          fontSize: 15.0)),
+                                          fontSize: 18.0)),
                                 ),
                               ])))
                 ],

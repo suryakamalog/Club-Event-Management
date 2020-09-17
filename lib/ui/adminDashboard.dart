@@ -1,13 +1,13 @@
-import 'package:event/ui/adminPostPage.dart';
-import 'package:event/ui/userProfilePage.dart';
-import 'package:event/utils/eventPost.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../loginPage.dart';
-import '../utils/eventDatabase.dart';
 import 'package:flutter/material.dart';
-import 'postInfoCard.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'adminPostPage.dart';
+import 'userProfilePage.dart';
+import 'postInfoCard.dart';
+import '../utils/eventPost.dart';
+import '../utils/eventDatabase.dart';
+import '../loginPage.dart';
 
 class AdminDashboard extends StatefulWidget {
   final User user;
@@ -26,7 +26,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
   String _branch;
 
   Future<void> profileClick() async {
-    var d = await FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('users')
         .doc(widget.user.uid)
         .get()
@@ -64,7 +64,6 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
   getPref() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    //Return String
     currentUsername = prefs.getString('loggedInUsername');
   }
 
@@ -83,45 +82,53 @@ class _AdminDashboardState extends State<AdminDashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            Container(
-              height: 80,
-              child: DrawerHeader(
-                child: Text('Welcome $currentUsername'),
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
-              ),
-            ),
-            ListTile(
-              title: Text('Profile'),
-              onTap: this.profileClick,
-            ),
-            ListTile(
-                title: Text('Logout'),
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => LoginPage()));
-                }),
-          ],
-        ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Color(0xFFFF4747),
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white,
+        selectedFontSize: 14,
+        unselectedFontSize: 14,
+        onTap: (value) {
+          if (value == 0) {
+          } else if (value == 1) {
+            this.profileClick();
+          } else if (value == 2) {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => LoginPage()));
+          }
+        },
+        items: [
+          BottomNavigationBarItem(
+            title: Text('Events'),
+            icon: Icon(Icons.place),
+          ),
+          BottomNavigationBarItem(
+              title: Text('Profile'), icon: Icon(Icons.person)),
+          BottomNavigationBarItem(
+            title: Text('Logout'),
+            icon: Icon(Icons.exit_to_app),
+          ),
+        ],
       ),
       appBar: AppBar(
-        backgroundColor: Color(0xff028090),
-        title: Text('Dashboard'),
+        leading: Icon(Icons.home),
+        backgroundColor: Color(0xFFFF4747),
+        title: Text('Home'),
       ),
       body: Column(
         children: <Widget>[
           Expanded(child: PostInfo(this.posts, widget.user)),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: this.onClicked,
-        child: Icon(Icons.add),
-        backgroundColor: Colors.green,
+        icon: Icon(
+          Icons.add,
+          size: 30,
+        ),
+        label: Text('Add Event', style: TextStyle(fontSize: 20)),
+        backgroundColor: Color(0xFFFFB547),
       ),
     );
   }

@@ -1,4 +1,3 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -14,7 +13,7 @@ class _AttendeeCardState extends State<AttendeeCard> {
   String name = "Loading...";
 
   Future<void> getData(dynamic uid) async {
-    var data = await FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('users')
         .doc(uid)
         .get()
@@ -27,15 +26,21 @@ class _AttendeeCardState extends State<AttendeeCard> {
 
   List<dynamic> foundUsers = [];
   Future<void> getFoundUsers() async {
-    var d = await FirebaseFirestore.instance
-        .collection('foundUsers')
+    final snapshot = await FirebaseFirestore.instance
+        .collection("foundUsers")
         .doc(widget.eventID)
-        .get()
-        .then((DocumentSnapshot ds) async {
-      setState(() {
-        foundUsers = ds.data()['foundUsers'];
+        .get();
+    if (snapshot != null && snapshot.exists) {
+      await FirebaseFirestore.instance
+          .collection('foundUsers')
+          .doc(widget.eventID)
+          .get()
+          .then((DocumentSnapshot ds) async {
+        setState(() {
+          foundUsers = ds.data()['foundUsers'];
+        });
       });
-    });
+    }
   }
 
   @override

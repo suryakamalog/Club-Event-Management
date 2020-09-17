@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -99,7 +98,7 @@ class _SignUpState extends State<SignUp> {
     ScreenUtil.init(context);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xff028090),
+        backgroundColor: Color(0xFFFF4747),
         title: Text('Register'),
       ),
       body: Padding(
@@ -259,10 +258,12 @@ class _SignUpState extends State<SignUp> {
                             controller: confirmPasswordController,
                             obscureText: true,
                             decoration: InputDecoration(
-                                errorText: passwordController.text !=
-                                        confirmPasswordController.text
-                                    ? "Password does not match"
-                                    : null,
+                                errorText:
+                                    confirmPasswordController.text.isNotEmpty &&
+                                            passwordController.text !=
+                                                confirmPasswordController.text
+                                        ? "Password does not match"
+                                        : null,
                                 hintText: "Confirm Password",
                                 hintStyle: TextStyle(
                                     color: Colors.grey, fontSize: 12.0)),
@@ -272,14 +273,17 @@ class _SignUpState extends State<SignUp> {
                           height: ScreenUtil().setHeight(40),
                         ),
                         Center(
-                            child: FlatButton(
-                          color: Colors.blue,
+                            child: RaisedButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18.0),
+                              side: BorderSide(color: Colors.red)),
+                          color: Colors.red,
                           textColor: Colors.white,
                           padding: EdgeInsets.all(8.0),
-                          splashColor: Colors.blueAccent,
+                          splashColor: Colors.white,
                           onPressed: this.click,
                           child: Text(
-                            "Submit",
+                            "SignUp",
                             style: TextStyle(fontSize: 20.0),
                           ),
                         ))

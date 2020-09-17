@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../utils/userData.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'userQR.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -131,8 +128,11 @@ class MapScreenState extends State<ProfilePage>
                   ],
                 ),
               ),
-              new FlatButton(
-                color: Colors.blue,
+              new RaisedButton(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                    side: BorderSide(color: Colors.red)),
+                color: Color(0xFFFF4747),
                 textColor: Colors.white,
                 padding: EdgeInsets.all(8.0),
                 splashColor: Colors.blueAccent,

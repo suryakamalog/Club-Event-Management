@@ -1,15 +1,13 @@
 import 'package:event/ui/userEventRegList.dart';
-import 'package:flutter/semantics.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import '../utils/eventPost.dart';
 import '../utils/eventDatabase.dart';
 import '../ui/userProfilePage.dart';
 import 'package:event/loginPage.dart';
 import 'postInfoCard.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import '../utils/Constants.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 const textStyle = TextStyle(
@@ -71,7 +69,6 @@ class _UserDashboardState extends State<UserDashboard> {
 
   getPref() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    //Return String
     currentUsername = prefs.getString('loggedInUsername');
   }
 
@@ -85,46 +82,43 @@ class _UserDashboardState extends State<UserDashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            Container(
-              height: 80,
-              child: DrawerHeader(
-                child: Text('Welcome $currentUsername'),
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
-              ),
-            ),
-            ListTile(
-              title: Text('Profile'),
-              onTap: this.profileClick,
-            ),
-            ListTile(
-              title: Text('Registered Events'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            UserEventRegList(widget.user.uid)));
-              },
-            ),
-            ListTile(
-              title: Text('Logout'),
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => LoginPage()));
-              },
-            ),
-          ],
-        ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Color(0xFFFF4747),
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white,
+        selectedFontSize: 14,
+        unselectedFontSize: 14,
+        onTap: (value) {
+          if (value == 0) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => UserEventRegList(widget.user.uid)));
+          } else if (value == 1) {
+            this.profileClick();
+          } else if (value == 2) {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => LoginPage()));
+          }
+        },
+        items: [
+          BottomNavigationBarItem(
+            title: Text('Registered'),
+            icon: Icon(Icons.done),
+          ),
+          BottomNavigationBarItem(
+              title: Text('Profile'), icon: Icon(Icons.person)),
+          BottomNavigationBarItem(
+            title: Text('Logout'),
+            icon: Icon(Icons.exit_to_app),
+          ),
+        ],
       ),
       appBar: AppBar(
-        backgroundColor: Color(0xff028090),
-        title: Text('Dashboard'),
+        backgroundColor: Color(0xFFFF4747),
+        title: Text('Home'),
+        leading: Icon(Icons.home),
       ),
       body: Column(
         children: <Widget>[

@@ -1,14 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:event/ui/attendeeCard.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:event/ui/attendeeCard.dart';
 
 class RegUserList extends StatefulWidget {
   final dynamic eventID;
   final List<dynamic> userRegistered;
 
-  //List<dynamic> x = userRegistered.toList();
   RegUserList(this.eventID, this.userRegistered);
 
   @override
@@ -82,7 +81,7 @@ class _RegUserListState extends State<RegUserList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xff028090),
+        backgroundColor: Color(0xFFFF4747),
         title: Text('Attendees'),
       ),
       body: Column(children: <Widget>[
@@ -98,10 +97,14 @@ class _RegUserListState extends State<RegUserList> {
           ),
         ),
       ]),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: _scan,
-        child: Icon(Icons.settings_overscan),
-        backgroundColor: Colors.green,
+        icon: Icon(
+          Icons.camera,
+          size: 30,
+        ),
+        label: Text('Scan QR', style: TextStyle(fontSize: 20)),
+        backgroundColor: Color(0xFFFFB547),
       ),
     );
   }
