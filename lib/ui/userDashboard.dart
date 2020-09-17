@@ -1,3 +1,6 @@
+import 'package:event/ui/userEventRegList.dart';
+import 'package:flutter/semantics.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/eventPost.dart';
 import '../utils/eventDatabase.dart';
 import '../ui/userProfilePage.dart';
@@ -6,9 +9,9 @@ import 'postInfoCard.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import '../utils/Constants.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
-
 const textStyle = TextStyle(
   fontSize: 16,
 );
@@ -21,24 +24,25 @@ class UserDashboard extends StatefulWidget {
 }
 
 class _UserDashboardState extends State<UserDashboard> {
+  String currentUsername;
   List<EventPost> posts = [];
   String _name;
   String _mobile;
-  String _email = _auth.currentUser.email;
+  String _email;
   String _year;
   String _branch;
 
   Future<void> profileClick() async {
     var d = await FirebaseFirestore.instance
         .collection('users')
-        .doc(_email)
+        .doc(widget.user.uid)
         .get()
-        .then((DocumentSnapshot) async {
-      _name = DocumentSnapshot.data()['name'];
-      _mobile = DocumentSnapshot.data()['mobile'];
-      _email = DocumentSnapshot.data()['email'];
-      _year = DocumentSnapshot.data()['year'];
-      _branch = DocumentSnapshot.data()['branch'];
+        .then((DocumentSnapshot ds) async {
+      _name = ds.data()['name'];
+      _mobile = ds.data()['mobile'];
+      _email = ds.data()['email'];
+      _year = ds.data()['year'];
+      _branch = ds.data()['branch'];
     });
 
     Navigator.push(
@@ -65,9 +69,16 @@ class _UserDashboardState extends State<UserDashboard> {
         });
   }
 
+  getPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //Return String
+    currentUsername = prefs.getString('loggedInUsername');
+  }
+
   @override
   void initState() {
     super.initState();
+    getPref();
     updatePosts();
   }
 
@@ -81,7 +92,7 @@ class _UserDashboardState extends State<UserDashboard> {
             Container(
               height: 80,
               child: DrawerHeader(
-                child: Text('Welcome'),
+                child: Text('Welcome $currentUsername'),
                 decoration: BoxDecoration(
                   color: Colors.blue,
                 ),
@@ -90,6 +101,16 @@ class _UserDashboardState extends State<UserDashboard> {
             ListTile(
               title: Text('Profile'),
               onTap: this.profileClick,
+            ),
+            ListTile(
+              title: Text('Registered Events'),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            UserEventRegList(widget.user.uid)));
+              },
             ),
             ListTile(
               title: Text('Logout'),

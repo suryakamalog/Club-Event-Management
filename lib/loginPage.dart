@@ -49,35 +49,29 @@ class _LoginPageState extends State<LoginPage> {
 
       var d = await FirebaseFirestore.instance
           .collection('users')
-          .doc(_email)
+          .doc(user.user.uid)
           .get()
-          .then((DocumentSnapshot) async {
-        _name = DocumentSnapshot.data()['name'];
-        _mobile = DocumentSnapshot.data()['mobile'];
-        _email = DocumentSnapshot.data()['email'];
-        _role = DocumentSnapshot.data()['role'];
-        _year = DocumentSnapshot.data()['year'];
-        _branch = DocumentSnapshot.data()['branch'];
-
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString(Constants.loggedInUserRole, _role);
-        print(Constants.loggedInUserRole);
-        //print(_role);
+          .then((DocumentSnapshot ds) async {
+        _name = ds.data()['name'];
+        _mobile = ds.data()['mobile'];
+        _email = ds.data()['email'];
+        _role = ds.data()['role'];
+        _year = ds.data()['year'];
+        _branch = ds.data()['branch'];
       });
-      print(Constants.loggedInUserRole);
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('loggedInUsername', _name);
+      prefs.setString('loggedInRole', _role);
+
       var curUser = _auth.currentUser;
+      print(_role);
       if (_role == "student")
-        // Navigator.push(
-        //     context,
-        //     MaterialPageRoute(
-        //         builder: (context) =>
-        //             ProfilePage(_name, _mobile, _email, _year, _branch)));
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => UserDashboard(curUser)));
       else if (_role == "admin")
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => AdminDashboard(curUser)));
-      //print(prefs.getString('loggedInUserRole'));
     } catch (e) {
       print(e.message);
     }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/eventPost.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 const textStyle = TextStyle(
   fontSize: 16,
@@ -20,7 +21,34 @@ class PostInfo extends StatefulWidget {
 }
 
 class _PostInfoState extends State<PostInfo> {
-  // var post;
+  Future<void> addToEventList(dynamic eventID) async {
+    var list = [eventID];
+
+    final snapshot = await FirebaseFirestore.instance
+        .collection("attendedEvents")
+        .doc(widget.user.uid)
+        .get();
+
+    if (snapshot == null || !snapshot.exists) {
+      FirebaseFirestore.instance
+          .collection("attendedEvents")
+          .doc(widget.user.uid)
+          .set({
+        "attendedEvents": [],
+      });
+
+      FirebaseFirestore.instance
+          .collection("attendedEvents")
+          .doc(widget.user.uid)
+          .update({"attendedEvents": FieldValue.arrayUnion(list)});
+    } else {
+      FirebaseFirestore.instance
+          .collection("attendedEvents")
+          .doc(widget.user.uid)
+          .update({"attendedEvents": FieldValue.arrayUnion(list)});
+    }
+  }
+
   void attend(Function callBack) {
     this.setState(() {
       callBack();
@@ -31,7 +59,7 @@ class _PostInfoState extends State<PostInfo> {
   shared() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      _role = prefs.getString(Constants.loggedInUserRole);
+      _role = prefs.getString('loggedInRole');
     });
   }
 
@@ -102,6 +130,7 @@ class _PostInfoState extends State<PostInfo> {
                         splashColor: Colors.grey,
                         onPressed: () {
                           if (_role == 'admin') {
+                            print("Inside postinfocard-----admin");
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -110,6 +139,8 @@ class _PostInfoState extends State<PostInfo> {
                                         post.userRegistered.toList())));
                           } else {
                             print("in this");
+                            addToEventList(post.currentEventID());
+                            post.update();
                             this.attend(() => post.attendEvent(widget.user));
                           }
                         },

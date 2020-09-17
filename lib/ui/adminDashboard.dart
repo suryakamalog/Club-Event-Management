@@ -1,14 +1,13 @@
 import 'package:event/ui/adminPostPage.dart';
 import 'package:event/ui/userProfilePage.dart';
 import 'package:event/utils/eventPost.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../loginPage.dart';
 import '../utils/eventDatabase.dart';
 import 'package:flutter/material.dart';
 import 'postInfoCard.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-final FirebaseAuth _auth = FirebaseAuth.instance;
 
 class AdminDashboard extends StatefulWidget {
   final User user;
@@ -19,24 +18,24 @@ class AdminDashboard extends StatefulWidget {
 
 class _AdminDashboardState extends State<AdminDashboard> {
   List<EventPost> posts = [];
-
+  String currentUsername;
   String _name;
   String _mobile;
-  String _email = _auth.currentUser.email;
+  String _email;
   String _year;
   String _branch;
 
   Future<void> profileClick() async {
     var d = await FirebaseFirestore.instance
         .collection('users')
-        .doc(_email)
+        .doc(widget.user.uid)
         .get()
-        .then((DocumentSnapshot) async {
-      _name = DocumentSnapshot.data()['name'];
-      _mobile = DocumentSnapshot.data()['mobile'];
-      _email = DocumentSnapshot.data()['email'];
-      _year = DocumentSnapshot.data()['year'];
-      _branch = DocumentSnapshot.data()['branch'];
+        .then((DocumentSnapshot ds) async {
+      _name = ds.data()['name'];
+      _mobile = ds.data()['mobile'];
+      _email = ds.data()['email'];
+      _year = ds.data()['year'];
+      _branch = ds.data()['branch'];
     });
 
     Navigator.push(
@@ -63,9 +62,16 @@ class _AdminDashboardState extends State<AdminDashboard> {
         });
   }
 
+  getPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //Return String
+    currentUsername = prefs.getString('loggedInUsername');
+  }
+
   @override
   void initState() {
     super.initState();
+    getPref();
     updatePosts();
   }
 
@@ -81,10 +87,13 @@ class _AdminDashboardState extends State<AdminDashboard> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            DrawerHeader(
-              child: Text('Welcome'),
-              decoration: BoxDecoration(
-                color: Colors.blue,
+            Container(
+              height: 80,
+              child: DrawerHeader(
+                child: Text('Welcome $currentUsername'),
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
               ),
             ),
             ListTile(

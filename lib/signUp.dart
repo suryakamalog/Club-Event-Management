@@ -76,15 +76,13 @@ class _SignUpState extends State<SignUp> {
           email: _email, password: _password);
       User user = result.user;
 
-      FirebaseFirestore.instance
-          .collection("users")
-          .doc((emailController.text))
-          .set({
+      FirebaseFirestore.instance.collection("users").doc(user.uid).set({
         "name": "${nameController.text}",
         "mobile": "${mobileController.text}",
         "email": "${emailController.text}",
         "year": '${_year}',
         "branch": '${_branch}',
+        "uid": "${user.uid}",
         "role": "student"
       });
       print("registered the user");
