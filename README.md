@@ -36,7 +36,7 @@ flutter pub get
 Open the project in Android Studio
  
  
-## Screenshot
+## Screenshots
 
 <div align="center">
 <table>
