@@ -1,4 +1,5 @@
 import 'package:event/loginPage.dart';
+import 'package:event/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -54,6 +55,9 @@ class _SignUpState extends State<SignUp> {
   bool validateEmail = false;
   bool validatePassword = false;
   bool validateConfirmPassword = false;
+  bool tooSmallPassword = false;
+  bool _obscureText = true;
+  bool _obscureText1 = true;
 
   TextEditingController nameController = TextEditingController();
   TextEditingController mobileController = TextEditingController();
@@ -61,20 +65,54 @@ class _SignUpState extends State<SignUp> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
 
+  bool checkAllFields() {
+    if ("${mobileController.text}".length < 10) {
+      toast("Incorrect Mobile number", Colors.red);
+      return false;
+    }
+    if (!(RegExp(
+            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+        .hasMatch("${emailController.text}"))) {
+      toast("Incorrect Email", Colors.red);
+      return false;
+    }
+    if ("${passwordController.text}".length < 6) {
+      toast("Password should be at least 6 characters long", Colors.red);
+      return false;
+    }
+    if ("${passwordController.text}" != "${confirmPasswordController.text}") {
+      toast("Passwords do not match", Colors.red);
+      return false;
+    }
+    return true;
+  }
+
   Future<void> click() async {
+    if (!checkAllFields()) return;
+
     _name = "${nameController.text}";
     _mobile = "${mobileController.text}";
     _email = "${emailController.text}";
     _password = "${passwordController.text}";
-    _confirmPassword = "${confirmPasswordController}";
+    _confirmPassword = "${confirmPasswordController.text}";
     // print(_email);
     // print(_password);
     print("clicked");
     try {
-      UserCredential result = await _auth.createUserWithEmailAndPassword(
+      final result = await _auth.createUserWithEmailAndPassword(
           email: _email, password: _password);
+
+      if (result != null) {
+        await result.user.sendEmailVerification();
+        await _auth.signOut();
+      }
+
       User user = result.user;
 
+      if (user.emailVerified)
+        print("YES VERIFIED");
+      else
+        print("NOT VERIFIED");
       FirebaseFirestore.instance.collection("users").doc(user.uid).set({
         "name": "${nameController.text}",
         "mobile": "${mobileController.text}",
@@ -144,7 +182,7 @@ class _SignUpState extends State<SignUp> {
                         TextField(
                           onChanged: (value) {
                             setState(() {
-                              value.isEmpty
+                              value.isEmpty || value.length != 10
                                   ? validateMobile = true
                                   : validateMobile = false;
                             });
@@ -153,9 +191,9 @@ class _SignUpState extends State<SignUp> {
                           controller: mobileController,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
-                              errorText: validateMobile
-                                  ? "Mobile can\'t be empty"
-                                  : null,
+                              // errorText: validateMobile
+                              //     ? "Mobile can\'t be empty"
+                              //     : null,
                               hintText: "Mobile",
                               prefixText: '+91-',
                               hintStyle: TextStyle(
@@ -228,8 +266,18 @@ class _SignUpState extends State<SignUp> {
                               });
                             },
                             controller: passwordController,
-                            obscureText: true,
+                            obscureText: _obscureText,
                             decoration: InputDecoration(
+                                suffixIcon: new GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _obscureText = !_obscureText;
+                                    });
+                                  },
+                                  child: new Icon(_obscureText
+                                      ? Icons.visibility_off
+                                      : Icons.visibility),
+                                ),
                                 errorText: validatePassword
                                     ? "Password can\'t be empty"
                                     : null,
@@ -256,8 +304,18 @@ class _SignUpState extends State<SignUp> {
                               });
                             },
                             controller: confirmPasswordController,
-                            obscureText: true,
+                            obscureText: _obscureText1,
                             decoration: InputDecoration(
+                                suffixIcon: new GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _obscureText1 = !_obscureText1;
+                                    });
+                                  },
+                                  child: new Icon(_obscureText1
+                                      ? Icons.visibility_off
+                                      : Icons.visibility),
+                                ),
                                 errorText:
                                     confirmPasswordController.text.isNotEmpty &&
                                             passwordController.text !=

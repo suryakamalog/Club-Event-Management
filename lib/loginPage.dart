@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'signUp.dart';
 import 'dart:io';
+import 'package:event/utils/toast.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -24,53 +25,56 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String _name;
   String _role;
-  String _mobile;
   String _email;
-  String _password;
-  String _year;
-  String _branch;
 
   bool validateEmail = false;
   bool validatePassword = false;
-
+  bool _obscureText = true;
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
   Future<void> click() async {
     _email = "${emailController.text}";
-    _password = "${passwordController.text}";
+    _email.replaceAll(" ", "");
 
     try {
-      UserCredential user = await _auth.signInWithEmailAndPassword(
-          email: _email, password: _password);
+      final result = await _auth.signInWithEmailAndPassword(
+          email: _email, password: "${passwordController.text}");
 
-      var d = await FirebaseFirestore.instance
+      // uncomment for production
+
+      if (!result.user.emailVerified) {
+        print("NOT VERIFIED");
+        toast("Email not verified", Colors.red);
+        return;
+      }
+      await FirebaseFirestore.instance
           .collection('users')
-          .doc(user.user.uid)
+          .doc(result.user.uid)
           .get()
           .then((DocumentSnapshot ds) async {
         _name = ds.data()['name'];
-        _mobile = ds.data()['mobile'];
-        _email = ds.data()['email'];
         _role = ds.data()['role'];
-        _year = ds.data()['year'];
-        _branch = ds.data()['branch'];
       });
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('loggedInUsername', _name);
       prefs.setString('loggedInRole', _role);
 
-      var curUser = _auth.currentUser;
-      print(_role);
+      // var curUser = _auth.currentUser;
       if (_role == "student")
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => UserDashboard(curUser)));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => UserDashboard(result.user)));
       else if (_role == "admin")
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => AdminDashboard(curUser)));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => AdminDashboard(result.user)));
     } catch (e) {
       print(e.message);
+      toast("Incorrect email or password", Colors.red);
     }
   }
 
@@ -180,8 +184,18 @@ class _LoginPageState extends State<LoginPage> {
                                   });
                                 },
                                 controller: passwordController,
-                                obscureText: true,
+                                obscureText: _obscureText,
                                 decoration: InputDecoration(
+                                    suffixIcon: new GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _obscureText = !_obscureText;
+                                        });
+                                      },
+                                      child: new Icon(_obscureText
+                                          ? Icons.visibility_off
+                                          : Icons.visibility),
+                                    ),
                                     prefixIcon: Icon(
                                       Icons.lock,
                                       color: Colors.grey,

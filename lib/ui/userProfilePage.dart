@@ -39,11 +39,6 @@ class MapScreenState extends State<ProfilePage>
     _email = widget.email;
     _year = widget.year;
     _branch = widget.branch;
-    print(widget.name);
-    print(widget.mobile);
-    print(widget.email);
-    print(widget.year);
-    print(widget.branch);
   }
 
   void click() {

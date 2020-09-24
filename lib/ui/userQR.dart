@@ -14,7 +14,7 @@ class _UserQRState extends State<UserQR> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xff028090),
+        backgroundColor: Color(0xFFFF4747),
         title: Text('Your QR code'),
       ),
       body: Container(
