@@ -63,6 +63,7 @@ class _RegisteredUserListState extends State<RegisteredUserList> {
       toast("User Not Found!", Colors.red);
     }
     initState();
+    setState(() {});
   }
 
   Future<void> getFoundUsers() async {
