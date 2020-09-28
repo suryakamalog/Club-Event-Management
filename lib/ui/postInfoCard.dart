@@ -1,8 +1,8 @@
+import 'package:event/ui/registeredUserList.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../ui/regUserList.dart';
 import '../utils/eventPost.dart';
 
 const textStyle = TextStyle(
@@ -136,7 +136,7 @@ class _PostInfoState extends State<PostInfo> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => RegUserList(
+                                    builder: (context) => RegisteredUserList(
                                         post.currentEventID(),
                                         post.userRegistered.toList())));
                           } else {

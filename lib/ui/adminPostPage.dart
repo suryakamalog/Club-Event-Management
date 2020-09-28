@@ -207,8 +207,9 @@ class _AdminPostPageState extends State<AdminPostPage> {
                           },
                           controller: venueController,
                           decoration: InputDecoration(
-                              errorText:
-                                  validateVenue ? "Year can\'t be empty" : null,
+                              errorText: validateVenue
+                                  ? "Venue can\'t be empty"
+                                  : null,
                               hintText: "Venue",
                               hintStyle: TextStyle(
                                   color: Colors.grey, fontSize: 12.0)),

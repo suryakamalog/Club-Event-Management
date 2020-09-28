@@ -43,11 +43,13 @@ class _LoginPageState extends State<LoginPage> {
 
       // uncomment for production
 
-      if (!result.user.emailVerified) {
-        print("NOT VERIFIED");
-        toast("Email not verified", Colors.red);
-        return;
-      }
+      // if (!result.user.emailVerified) {
+      //   print("NOT VERIFIED");
+      //   toast("Email not verified", Colors.red);
+      //   return;
+      // }
+
+      
       await FirebaseFirestore.instance
           .collection('users')
           .doc(result.user.uid)

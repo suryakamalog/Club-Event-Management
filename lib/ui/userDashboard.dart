@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:event/ui/userEventRegList.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 import '../utils/eventPost.dart';
 import '../utils/eventDatabase.dart';
 import '../ui/userProfilePage.dart';
@@ -120,9 +123,120 @@ class _UserDashboardState extends State<UserDashboard> {
         title: Text('Home'),
         leading: Icon(Icons.home),
       ),
-      body: Column(
+      body: Center(
+        child: DelayedList(this.posts, widget.user),
+      ),
+    );
+  }
+}
+
+class DelayedList extends StatefulWidget {
+  final User user;
+  final List<EventPost> posts;
+  DelayedList(this.posts, this.user);
+
+  @override
+  _DelayedListState createState() => _DelayedListState();
+}
+
+class _DelayedListState extends State<DelayedList> {
+  bool isLoading = true;
+
+  @override
+  Widget build(BuildContext context) {
+    Timer timer = Timer(Duration(seconds: 3), () {
+      setState(() {
+        isLoading = false;
+      });
+    });
+    return isLoading
+        ? ShimmerList()
+        : Datalist(timer, widget.user, widget.posts);
+  }
+}
+
+class Datalist extends StatelessWidget {
+  final Timer timer;
+  final User user;
+  final List<EventPost> posts;
+  Datalist(this.timer, this.user, this.posts);
+
+  @override
+  Widget build(BuildContext context) {
+    timer.cancel();
+    return Column(
+      children: <Widget>[
+        Expanded(child: PostInfo(this.posts, this.user)),
+      ],
+    );
+  }
+}
+
+class ShimmerList extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    int offset = 0;
+    int time = 800;
+
+    return SafeArea(
+      child: ListView.builder(
+        itemCount: 6,
+        itemBuilder: (BuildContext context, int index) {
+          offset += 5;
+          time = 800 + offset;
+          return Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15),
+              child: Shimmer.fromColors(
+                highlightColor: Colors.white,
+                baseColor: Colors.grey[300],
+                child: ShimmerLayout(),
+                period: Duration(milliseconds: time),
+              ));
+        },
+      ),
+    );
+  }
+}
+
+class ShimmerLayout extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    double containerWidth = 280;
+    double containerHeight = 15;
+
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 7.5),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Expanded(child: PostInfo(this.posts, widget.user)),
+          Container(
+            height: 100,
+            width: 80,
+            color: Colors.grey,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                height: containerHeight,
+                width: containerWidth,
+                color: Colors.grey,
+              ),
+              SizedBox(height: 5),
+              Container(
+                height: containerHeight,
+                width: containerWidth,
+                color: Colors.grey,
+              ),
+              SizedBox(height: 5),
+              Container(
+                height: containerHeight,
+                width: containerWidth * 0.75,
+                color: Colors.grey,
+              )
+            ],
+          )
         ],
       ),
     );
