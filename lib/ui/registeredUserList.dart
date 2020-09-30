@@ -52,7 +52,6 @@ class _RegisteredUserListState extends State<RegisteredUserList> {
         "#000000", "Cancel", true, ScanMode.QR);
 
     qrCodeResult = text;
-    // setState(() {});
     print(qrCodeResult);
 
     if (widget.userRegistered.contains(qrCodeResult)) {
@@ -96,7 +95,6 @@ class _RegisteredUserListState extends State<RegisteredUserList> {
       nameData[widget.userRegistered[i]] = name;
       setState(() {});
     }
-    print(nameData);
   }
 
   @override
@@ -120,6 +118,29 @@ class _RegisteredUserListState extends State<RegisteredUserList> {
         title: Text('Attendees'),
       ),
       body: Column(children: <Widget>[
+        Container(
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Checked In: ${foundUsers.length}',
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    'Total: ${widget.userRegistered.length}',
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
         Expanded(
           child: ListView.builder(
             scrollDirection: Axis.vertical,

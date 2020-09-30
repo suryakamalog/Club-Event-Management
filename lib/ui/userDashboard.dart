@@ -75,6 +75,15 @@ class _UserDashboardState extends State<UserDashboard> {
     currentUsername = prefs.getString('loggedInUsername');
   }
 
+  Future<void> removeAll() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('email');
+    prefs.remove('loggedInUsername');
+    prefs.remove('loggedInRole');
+    prefs.remove('loggedInUID');
+    await FirebaseAuth.instance.signOut();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -101,6 +110,7 @@ class _UserDashboardState extends State<UserDashboard> {
           } else if (value == 1) {
             this.profileClick();
           } else if (value == 2) {
+            removeAll();
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => LoginPage()));
           }

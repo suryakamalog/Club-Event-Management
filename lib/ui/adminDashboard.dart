@@ -81,6 +81,15 @@ class _AdminDashboardState extends State<AdminDashboard> {
         MaterialPageRoute(builder: (context) => AdminPostPage(this.newPost)));
   }
 
+  Future<void> removeAll() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('email');
+    prefs.remove('loggedInUsername');
+    prefs.remove('loggedInRole');
+    prefs.remove('loggedInUID');
+    await FirebaseAuth.instance.signOut();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,6 +105,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
           } else if (value == 1) {
             this.profileClick();
           } else if (value == 2) {
+            removeAll();
+
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => LoginPage()));
           }

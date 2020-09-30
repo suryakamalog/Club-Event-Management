@@ -49,7 +49,6 @@ class _LoginPageState extends State<LoginPage> {
       //   return;
       // }
 
-      
       await FirebaseFirestore.instance
           .collection('users')
           .doc(result.user.uid)
@@ -60,9 +59,10 @@ class _LoginPageState extends State<LoginPage> {
       });
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('loggedInUID', result.user.uid);
       prefs.setString('loggedInUsername', _name);
       prefs.setString('loggedInRole', _role);
-
+      prefs.setString('loggedIn', 'yes');
       // var curUser = _auth.currentUser;
       if (_role == "student")
         Navigator.push(
@@ -80,6 +80,16 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  Future<void> onYesExit() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('email');
+    prefs.remove('loggedInUsername');
+    prefs.remove('loggedInRole');
+    prefs.remove('loggedInUID');
+    await FirebaseAuth.instance.signOut();
+    exit(0);
+  }
+
   Future<bool> _onWillPop() {
     return showDialog(
           context: context,
@@ -92,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: new Text('No'),
               ),
               new FlatButton(
-                onPressed: () => exit(0),
+                onPressed: onYesExit,
                 child: new Text('Yes'),
               ),
             ],
